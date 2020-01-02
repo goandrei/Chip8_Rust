@@ -18,7 +18,7 @@ impl Keypad {
         }
     }
 
-    pub fn emulate_cycle(&mut self) -> Result<bool, ()> {
+    pub fn update_pressed_keys(&mut self) -> Result<bool, ()> {
         
         self.pressed_keys = [false; 16];
 
@@ -50,35 +50,6 @@ impl Keypad {
             };
         }
 
-
-        let keys: Vec<Keycode> = self.event_pump
-            .keyboard_state()
-            .pressed_scancodes()
-            .filter_map(Keycode::from_scancode)
-            .collect();
-
-        for key in keys {
-            match key {
-                Keycode::Num1 => self.pressed_keys[0x1] = true,
-                Keycode::Num2 => self.pressed_keys[0x2] = true,
-                Keycode::Num3 => self.pressed_keys[0x3] = true,
-                Keycode::Num4 => self.pressed_keys[0xC] = true,
-                Keycode::Q => self.pressed_keys[0x4] = true,
-                Keycode::W => self.pressed_keys[0x5] = true,
-                Keycode::E => self.pressed_keys[0x6] = true,
-                Keycode::R => self.pressed_keys[0xD] = true,
-                Keycode::A => self.pressed_keys[0x7] = true,
-                Keycode::S => self.pressed_keys[0x8] = true,
-                Keycode::D => self.pressed_keys[0x9] = true,
-                Keycode::F => self.pressed_keys[0xE] = true,
-                Keycode::Z => self.pressed_keys[0xA] = true,
-                Keycode::X => self.pressed_keys[0x0] = true,
-                Keycode::C => self.pressed_keys[0xB] = true,
-                Keycode::V => self.pressed_keys[0xF] = true,
-                _ => continue,
-            }
-        }
-
         Ok(true)     
     }
 
@@ -89,16 +60,16 @@ impl Keypad {
             let old_pressed_keys = self.pressed_keys.clone();
 
             // get the new state
-            match self.emulate_cycle() {
+            match self.update_pressed_keys() {
                 Ok(true) => (),
                 Ok(false) => return Ok(0xFF),
                 Err(_) => return Err(String::new()),
             };
 
-            // finding a difference in the two arrays means there was a key press
-            // or release -> in this case we don't return anything 
+            // finding a difference in the two arrays means there was a key press or release 
+            // if it was a release we keep waiting
             for i in 0..16 {
-                if old_pressed_keys[i] == false && old_pressed_keys[i] != self.pressed_keys[i] {
+                if old_pressed_keys[i] == false && true == self.pressed_keys[i] {
                     return Ok(i as u8);
                 }
             }
@@ -109,5 +80,4 @@ impl Keypad {
     pub fn is_key_pressed(&self, key: u8) -> bool {
         self.pressed_keys[key as usize]
     }
-
 }

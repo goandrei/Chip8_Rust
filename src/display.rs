@@ -66,7 +66,6 @@ impl Display {
         for col in 0..8u32 {
             let bit = (buff >> (7 - col)) & 0x01;
             let display_coord = self.coord_to_matrix(x + col, y) % 2048;
-            println!("{}, {} => {}", x+col, y, display_coord);
 
             // if there is a pixel flip set the flag and continue since we also know we don't have to draw anything
             collision |= self.display[display_coord] == 1 && bit == 1;   
@@ -82,7 +81,6 @@ impl Display {
                 Ok(_) => (),
                 Err(err) => return Err(err),
             };
-            println!();
         }
 
         self.canvas.present();
@@ -98,11 +96,9 @@ impl Display {
         if bit == 1 {
             // if bit = 1 -> set color to white
             self.canvas.set_draw_color(Color::RGB(255u8, 255u8, 255u8));
-            print!("1");
         } else {
             // if bit = 0 -> set color to black => clear it
             self.canvas.set_draw_color(Color::RGB(0u8, 0u8, 0u8));
-            print!("0");
         }
     }
 }

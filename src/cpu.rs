@@ -92,7 +92,7 @@ impl Cpu {
     pub fn emulate_cycle(&mut self) -> Result<bool, String> {
 
         // update pressed keys
-        match self.keypad.emulate_cycle() {
+        match self.keypad.update_pressed_keys() {
             Ok(true) => (),
             Ok(false) => return Ok(false),
             Err(_) => return Err(String::new()),
@@ -558,9 +558,8 @@ impl Cpu {
     /// 
     /// Explanation : if the key stored in v[X] is pressed skip next instruction
     fn if_key_pressed_skip(&mut self, x: u16) -> Result<bool, String> {
-        println!("ProgramCounter = 0x{:02x} | 0xEX9E : if key {} is pressed skip inst", self.pc, x);
-        println!("IF KEY PRESSED SKIP KEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEY");
-        if self.keypad.is_key_pressed(x as u8) {
+        println!("ProgramCounter = 0x{:02x} | 0xEX9E : if key {} is pressed skip inst", self.pc, self.vp[x as usize]);
+        if self.keypad.is_key_pressed(self.vp[x as usize]) {
             self.pc += 2;
         }
         Ok(true)
@@ -570,9 +569,8 @@ impl Cpu {
     /// 
     /// Explanation : if the key stored in v[X] is not pressed skip next instruction
     fn if_key_not_pressed_skip(&mut self, x: u16) -> Result<bool, String> {
-        println!("ProgramCounter = 0x{:02x} | 0xEXA1 : if key {} not pressed skip inst", self.pc, x);
-        println!("IF KEY NOT PRESSED SKIP KEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEY");
-        if !self.keypad.is_key_pressed(x as u8) {
+        println!("ProgramCounter = 0x{:02x} | 0xEXA1 : if key {} not pressed skip inst", self.pc, self.vp[x as usize]);
+        if !self.keypad.is_key_pressed(self.vp[x as usize]) {
             self.pc += 2;
         }
         Ok(true)

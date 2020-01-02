@@ -43,7 +43,7 @@ fn main() {
             Ok(false) => process::exit(0),
             Err(err) => {
                 println!("An error occured : {}", err);
-                process::exit(0);
+                process::exit(1);
             },
         };
     }

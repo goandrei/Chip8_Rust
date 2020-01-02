@@ -41,7 +41,7 @@ fn op_1nnn_test() {
     cpu.opcode = 0x1000 | TARGET_ADDR;
     let result = cpu.execute_opcode().unwrap();
     assert_eq!(true, result);
-    assert_eq!(TARGET_ADDR as usize, cpu.pc);
+    assert_eq!((TARGET_ADDR - 2) as usize, cpu.pc);
 }
 
 #[test]
@@ -53,7 +53,7 @@ fn op_2nnn_test() {
     cpu.opcode = 0x2000 | TARGET_ADDR;
     let result = cpu.execute_opcode().unwrap();
     assert_eq!(true, result);
-    assert_eq!(TARGET_ADDR as usize, cpu.pc);
+    assert_eq!((TARGET_ADDR - 2) as usize, cpu.pc);
     assert_eq!(0x200, cpu.stack[1]);
     assert_eq!(1 as usize, cpu.sp);
 }
@@ -407,10 +407,9 @@ fn op_bnnn_test() {
     cpu.set_register(0usize, val_vo as u8);
     assert_eq!(val_vo as u8, cpu.get_register(0usize));
 
-
     let result = cpu.execute_opcode().unwrap();
     assert_eq!(true, result);
-    assert_eq!(((cpu.opcode & 0x0FFF) + val_vo) as usize, cpu.pc);
+    assert_eq!(((cpu.opcode & 0x0FFF) + val_vo - 2) as usize, cpu.pc);
 }
 
 #[test]
